@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('lissajous-button').addEventListener('click', () => {
-        const A = 100, B = 100, a = 5, b = 4, delta = Math.PI / 2;
+        const A = 250, B = 250, a = 5, b = 4, delta = Math.PI / 2;
         const centerX = container.offsetWidth / 2;
         const centerY = container.offsetHeight / 2;
     
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('phyllotaxis-button').addEventListener('click', () => {
         const angleIncrement = Math.PI * (3 - Math.sqrt(5)); // golden angle
-        const c = 4; // scale factor
+        const c = 10; // scale factor
     
         dots.forEach((dot, index) => {
             const r = c * Math.sqrt(index);
@@ -92,13 +92,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     document.getElementById('harmonograph-button').addEventListener('click', () => {
-        const A = [100, 100], f = [2, 3], p = [Math.PI/16, Math.PI/16], d = [0.02, 0.0315];
+        const A = [250, 250], f = [2, 3], p = [Math.PI/16, Math.PI/16], d = [0.02, 0.0315];
         const timeScale = 10;
         const centerX = container.offsetWidth / 2;
         const centerY = container.offsetHeight / 2;
     
         dots.forEach((dot, index) => {
-            const t = index / numberOfDots * 2 * Math.PI * timeScale;
+            const t = index / numberOfDots * 0.5 * Math.PI * timeScale;
             const x = centerX + (A[0] * Math.sin(f[0] * t + p[0]) * Math.exp(-d[0] * t));
             const y = centerY + (A[1] * Math.sin(f[1] * t + p[1]) * Math.exp(-d[1] * t));
             dot.style.transition = 'transform 1s ease';
