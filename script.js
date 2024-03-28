@@ -126,14 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-function timeHandler() {
-    if (allowMovement) {
-        dots.forEach(dot => {
-            dot.style.transition = 'transform 0.5s ease';
-            dot.style.transform = ''; // Reset transform to allow for natural movement
-        });
-    }
-}
 
 container.addEventListener('mousedown', function(event) {
     event.preventDefault();
