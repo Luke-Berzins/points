@@ -1,11 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('dot-container');
-    const squareButton = document.getElementById('square-button');
-    const spiralButton = document.getElementById('spiral-button');
-    const fibonacciButton = document.getElementById('fibonacci-button');
     const numberOfDots = 500;
     let dots = [];
-    let tails = [];
     let squareSize = Math.ceil(Math.sqrt(numberOfDots));
     let spacing = container.offsetWidth / squareSize;
 
@@ -21,7 +17,25 @@ document.addEventListener('DOMContentLoaded', function() {
         moveDot(dot);
     }
 
-    squareButton.addEventListener('click', () => {
+        // Function to move each dot slowly in a random direction
+        function moveDot(dot) {
+            const duration = 5000
+            const xMove = Math.random() * 100 - 50; // Move up to 50px in x
+            const yMove = Math.random() * 100 - 50; // Move up to 50px in y
+    
+            dot.style.transition = `transform ${duration}ms linear`;
+            dot.style.transform = `translate(${xMove}px, ${yMove}px)`;
+    
+            // After the movement completes, call moveDot again to continue movement
+            
+            if (move === true) {
+                setTimeout(() => moveDot(dot), duration);
+            }
+        }
+    
+        
+
+    document.getElementById('square-button').addEventListener('click', () => {
         dots.forEach((dot, index) => {
             let x = (index % squareSize) * spacing;
             let y = Math.floor(index / squareSize) * spacing;
@@ -29,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dot.style.transform = `translate(${x - dot.offsetLeft}px, ${y - dot.offsetTop}px)`;
         });
     });
-     spiralButton.addEventListener('click', () => {
+     document.getElementById('spiral-button').addEventListener('click', () => {
         const centerX = container.offsetWidth / 2;
         const centerY = container.offsetHeight / 2;
         const spread = spacing; // Adjust the spread to control the spiral density
@@ -45,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             angle += step;
         });
     });
-    fibonacciButton.addEventListener('click', () => {
+    document.getElementById('fibonacci-button').addEventListener('click', () => {
         const centerX = container.offsetWidth / 2;
         const centerY = container.offsetHeight / 2;
         let radius = spacing / 3; // Starting radius
@@ -106,58 +120,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    container.addEventListener('mousedown', function(event) {
-        const rect = container.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
 
+    let allowMovement = true; // More descriptive variable name
+
+function timeHandler() {
+    if (allowMovement) {
         dots.forEach(dot => {
             dot.style.transition = 'transform 0.5s ease';
-            let dotX = dot.offsetLeft + dot.offsetWidth / 2;
-            let dotY = dot.offsetTop + dot.offsetHeight / 2;
-            let deltaX = x - dotX;
-            let deltaY = y - dotY;
-            dot.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            dot.style.transform = ''; // Reset transform to allow for natural movement
         });
-
-        tails.forEach(tail => tail.remove());
-        tails = [];
-    });
-
-    container.addEventListener('mouseup', () => {
-        dots.forEach(dot => {
-            dot.style.transition = 'transform 0.5s ease';
-            dot.style.transform = '';
-        });
-
-        dots.forEach(dot => createTail(dot));
-        
-    });
-
-    // Function to move each dot slowly in a random direction
-    function moveDot(dot) {
-        const duration = 5000
-        const xMove = Math.random() * 100 - 50; // Move up to 50px in x
-        const yMove = Math.random() * 100 - 50; // Move up to 50px in y
-
-        dot.style.transition = `transform ${duration}ms linear`;
-        dot.style.transform = `translate(${xMove}px, ${yMove}px)`;
-
-        // After the movement completes, call moveDot again to continue movement
-        setTimeout(() => moveDot(dot), duration);
     }
+}
 
-    function createTail(dot) {
-        let tail = document.createElement('div');
-        tail.className = 'tail';
-        tail.style.left = dot.style.left;
-        tail.style.top = dot.style.top;
-        container.appendChild(tail);
-        tails.push(tail);
+container.addEventListener('mousedown', function(event) {
+    event.preventDefault();
 
-        setTimeout(() => {
-            tail.remove();
-            tails.splice(tails.indexOf(tail), 1);
-        }, 1000); // Tail disappears after 1 second
-    }
+    allowMovement = false; // Stop movement while dragging
+
+    const rect = container.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    dots.forEach(dot => {
+        dot.style.transition = 'transform 0.5s ease';
+        let dotX = dot.offsetLeft + dot.offsetWidth / 2;
+        let dotY = dot.offsetTop + dot.offsetHeight / 2;
+        let deltaX = x - dotX;
+        let deltaY = y - dotY;
+        dot.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    });
+});
+
+container.addEventListener('mouseup', () => {
+    // Schedule both actions after a single delay, using the longer one
+    setTimeout(() => {
+        timeHandler(); // Consider renaming this to reflect its purpose better
+        allowMovement = true; // Resume movement after the delay
+    }, 5000); // Use the longer delay to ensure consistent behavior
+});
+
 });
