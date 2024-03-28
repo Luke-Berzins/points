@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let dots = [];
     let squareSize = Math.ceil(Math.sqrt(numberOfDots));
     let spacing = container.offsetWidth / squareSize;
-
+    let allowMovement = true; 
     // Create dots
 
     for (let i = 0; i < numberOfDots; i++) {
@@ -19,18 +19,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to move each dot slowly in a random direction
         function moveDot(dot) {
-            const duration = 5000
+            const duration = 5000;
             const xMove = Math.random() * 100 - 50; // Move up to 50px in x
             const yMove = Math.random() * 100 - 50; // Move up to 50px in y
-    
-            dot.style.transition = `transform ${duration}ms linear`;
-            dot.style.transform = `translate(${xMove}px, ${yMove}px)`;
-    
-            // After the movement completes, call moveDot again to continue movement
-            
-            if (move === true) {
-                setTimeout(() => moveDot(dot), duration);
+        
+            if (allowMovement) {
+                dot.style.transition = `transform ${duration}ms linear`;
+                dot.style.transform = `translate(${xMove}px, ${yMove}px)`;
             }
+        
+            // After the movement completes, check if movement is allowed before continuing
+            setTimeout(() => {
+                if (allowMovement) {
+                    moveDot(dot); // Only continue moving if allowed
+                }
+            }, duration);
         }
     
         
@@ -121,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    let allowMovement = true; // More descriptive variable name
+
 
 function timeHandler() {
     if (allowMovement) {
@@ -152,11 +155,13 @@ container.addEventListener('mousedown', function(event) {
 });
 
 container.addEventListener('mouseup', () => {
-    // Schedule both actions after a single delay, using the longer one
+    // After interaction, wait for a specified time before resuming movement
     setTimeout(() => {
-        timeHandler(); // Consider renaming this to reflect its purpose better
-        allowMovement = true; // Resume movement after the delay
-    }, 5000); // Use the longer delay to ensure consistent behavior
+        allowMovement = true; // Allow dots to move again
+        dots.forEach(dot => {
+            moveDot(dot); // Resume movement for each dot
+        });
+    }, 5000); 
 });
 
 });
