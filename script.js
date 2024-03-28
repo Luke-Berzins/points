@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dots.push(dot);
         moveDot(dot);
     }
-
+    
         // Function to move each dot slowly in a random direction
         function moveDot(dot) {
             const duration = 5000;
@@ -146,14 +146,18 @@ container.addEventListener('mousedown', function(event) {
     });
 });
 
+let debounceTimer;
+
 container.addEventListener('mouseup', () => {
-    // After interaction, wait for a specified time before resuming movement
-    setTimeout(() => {
-        allowMovement = true; // Allow dots to move again
+    // Clear the existing timer on mouseup to reset the debounce period
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+        allowMovement = true; // Allow dots to move
         dots.forEach(dot => {
             moveDot(dot); // Resume movement for each dot
         });
-    }, 5000); 
+    }, 10000); // Wait for 5000ms after the last mouseup to start moving the dots
 });
 
 });
